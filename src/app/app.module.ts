@@ -46,6 +46,8 @@ import { SearchComponent } from './components/search/search.component';
 import { MenuToOrderComponent } from './components/menu-to-order/menu-to-order.component';
 import { MyOrdersComponent } from './components/my-orders/my-orders.component';
 import { WeatherComponent } from './components/weather/weather.component';
+import { FoodsearchComponent } from './components/foodsearch/foodsearch.component';
+import { ChefSpaceComponent } from './components/chef-space/chef-space.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +93,8 @@ import { WeatherComponent } from './components/weather/weather.component';
     MenuToOrderComponent,
     MyOrdersComponent,
     WeatherComponent,
+    FoodsearchComponent,
+    ChefSpaceComponent,
   ],
   imports: [
     BrowserModule,

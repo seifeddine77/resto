@@ -11,6 +11,7 @@ import { ArticleService } from 'src/app/services/article.service';
 export class AddArticleComponent implements OnInit {
   addArticleForm: FormGroup;
   id: any;
+  imagePreview:any;
   title: string;
   article: any = { };
 
@@ -25,6 +26,7 @@ export class AddArticleComponent implements OnInit {
 
     if (this.id) {
       this.title = ' EDIT';
+      console.log('this title',this.title);
    this.articleService.getArticleById(this.id).subscribe(
      (data)=>{
        this.article = data.article;
@@ -34,20 +36,23 @@ export class AddArticleComponent implements OnInit {
     else {
 
       this.title = 'ADD';
+      console.log('this title',this.title);
+      
     }
 
     this.addArticleForm = this.formBuilder.group({
       title: [''],
       content: [''],
       date: [''],
-      category: ['']
+      category: [''],
+      img:['']
 
     })
-    this.articleService.getArticleById(this.id).subscribe(
-      (data) => {
-       this.article = data.article ;
-      }
-    );
+    // this.articleService.getArticleById(this.id).subscribe(
+    //   (data) => {
+    //    this.article = data.article ;
+    //   }
+    // );
 
 
   }
@@ -73,7 +78,7 @@ export class AddArticleComponent implements OnInit {
     else {
       alert('addArticle clicked');
       console.log('here artcile object details', this.addArticleForm.value);
-      this.articleService.addArticle(this.addArticleForm.value).subscribe(
+      this.articleService.addArticle(this.addArticleForm.value,this.addArticleForm.value.img).subscribe(
         (data) => {
           console.log(' result', data.message);
 
@@ -81,11 +86,21 @@ export class AddArticleComponent implements OnInit {
 
 
       );
-      this.router.navigate(['admin']);
+      //this.router.navigate(['admin']);
 
 
     }
 
   }
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files[0];
+    this.addArticleForm.patchValue({ img: file });
+    this.addArticleForm.updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+    this.imagePreview = reader.result as string
+    };
+    reader.readAsDataURL(file);
+    }
 
 }

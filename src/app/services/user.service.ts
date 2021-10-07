@@ -20,8 +20,19 @@ export class UserService {
 
 
   }
-  signup(user: any) {
-    return this.http.post<{message:string}>(`${this.userURL}/signup`, user);
+  signup(user: any , img:File) {
+    const formData = new FormData();
+    formData.append('img',img);
+    formData.append('firstName',user.firstName);
+    formData.append('lastName',user.lastName);
+    formData.append('email',user.email);
+    formData.append('pwd',user.pwd);
+    formData.append('phone',user.phone);
+    formData.append('role',user.role);
+
+
+
+    return this.http.post<{message:string}>(`${this.userURL}/signup`, formData);
 
 
   }

@@ -13,6 +13,7 @@ export class AddPlatComponent implements OnInit {
 platForm:FormGroup;
 //object
 plat:any={};
+imagePreview:string;
 
 //construction des form (creation des inputs)
   constructor(private formBuilder:FormBuilder,
@@ -25,7 +26,8 @@ plat:any={};
       {
         name:[''],
         price:[''],
-      description:['']
+      description:[''],
+      img:['']
       }
     );
 
@@ -35,7 +37,7 @@ plat:any={};
 
   addPlat(){
 
-    this.platService.addPlat(this.plat).subscribe(
+    this.platService.addPlat(this.plat,this.platForm.value.img).subscribe(
       (data)=>
       {
        console.log('result',data.message);
@@ -55,6 +57,17 @@ plat:any={};
 // localStorage.setItem("plats",JSON.stringify(plats));
 // localStorage.setItem("idPlat",idPlat+1);
 
+  }
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files[0];
+    console.log('Here my file', file);
+    
+    this.platForm.patchValue({ img: file });
+    this.platForm.updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string
+    }; reader.readAsDataURL(file);
   }
 
 }

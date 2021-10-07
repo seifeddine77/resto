@@ -4,6 +4,7 @@
           <tr>
             <th scope="col"># Num</th>
             <th scope="col"># iD</th>
+            <th scope="col">Image</th>
             
             <!-- <th scope="col">image</th> -->
             <th scope="col">name</th>
@@ -19,7 +20,7 @@
             
             <th scope="row">{{plat._id}}</th>
            
-            <!-- <td><img src ="{{plat.image}}" ></td> -->
+            <td><img [src] ="plat.img"  width="100px" height="100px"></td>
             <td>{{plat.name}}</td>
             <td>{{plat.price}}</td>
             <td>{{plat.description}}</td>

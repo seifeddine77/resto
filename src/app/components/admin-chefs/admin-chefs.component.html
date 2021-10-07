@@ -11,6 +11,7 @@
         <th scope="col">note</th>
         <th scope="col">rank</th>
         <th scope="col">date</th>
+        <th scope="col">Image</th>
 
         <th scope="col">Actions</th>
 
@@ -28,6 +29,7 @@
         <td>{{chef.note}}</td>
         <td [ngStyle]="{'color':chefRank(chef.note)[0]}" >{{chefRank(chef.note)[1]}}</td>
         <td>{{chef.entryDate | date:'dd-MM-yyyy' }}</td>
+        <td><img [src]="chef.img" alt="" width="100px" height="100px"></td>
         
         <td><button type="button" class="btn btn-info" (click)="goToDisplay(chef._id)">display</button>
           <button type="button" class="btn btn-warning"(click)="goToEdit(chef._id)">edit</button>

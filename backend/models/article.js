@@ -5,7 +5,8 @@ const articleSchema = mongoose.Schema(
         title:String,
         content:String,
         date:String,
-        category:String
+        category:String,
+        img:String
     }
 )
 const article = mongoose.model('article',articleSchema);

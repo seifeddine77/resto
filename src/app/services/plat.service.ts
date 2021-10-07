@@ -20,8 +20,15 @@ export class PlatService {
 
 
   }
-  addPlat(plat) {
-    return this.http.post<{message:string}>(this.platURL, plat);
+  addPlat(plat,image:File) {
+    let formData = new FormData();
+    formData.append('image',image);
+    formData.append('name',plat.name);
+    formData.append('description',plat.description);
+    formData.append('price',plat.price);
+
+
+    return this.http.post<{message:string}>(this.platURL, formData);
 
 
   }

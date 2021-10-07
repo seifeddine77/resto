@@ -23,8 +23,14 @@ deleteChef(id)
  return this.http.delete<{message:string}>(`${this.chefURL}/${id}`);
 
 }
-addChef(chef){
-  return this.http.post<{message:string}>(this.chefURL, chef);
+addChef(chef , img:File){
+  let formData = new FormData();
+    formData.append('img',img);
+    formData.append('name',chef.name);
+    formData.append('speciality',chef.speciality);
+    formData.append('note',chef.note);
+    return this.http.post<{message:string}>(this.chefURL, formData);
+  
 
 
 }

@@ -4,8 +4,12 @@ const express = require('express');
 const axios = require('axios')
 //importer bcrypt:
 const bcrypt = require('bcrypt');
+/// importer JsonWebtoken:
+const jwt = require('jsonwebtoken');
 // creat express application:
 const app = express();
+// node module for upload documents
+
 /////import mongoose
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/restaurant');
@@ -34,6 +38,64 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+
+
+///upload images configuration .
+const path = require('path');
+const multer = require('multer');
+
+app.use('/images', express.static(path.join('backend/images')))
+const MIME_TYPE = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg'
+  
+ }
+
+ const storage = multer.diskStorage({
+  // destination
+  destination: (req, file, cb) => {
+  const isValid = MIME_TYPE[file.mimetype];
+  let error = new Error("Mime type is invalid");
+  if (isValid) {
+  error = null;
+  }
+  cb(null, 'backend/images')
+  },
+  filename: (req, file, cb) => {
+  const name = file.originalname.toLowerCase().split(' ').join('-');
+  const extension = MIME_TYPE[file.mimetype];
+  const imgName = name + '-' + Date.now() + '-crococoder-' + '.' +
+ extension;
+  cb(null, imgName);
+  }
+ });
+
+// app.use("/images", express.static(path.join("backend/images")));
+// const MIME_TYPE = {
+//   "image/png": "png",
+//   "image/jpeg": "jpg",
+//   "image/jpg": "jpg",
+//   "application/pdf": 'pdf'
+// };
+// const storage = multer.diskStorage({
+//   // destination
+//   destination: (req, file, cb) => {
+//     const isValid = MIME_TYPE[file.mimetype];
+//     let error = new Error("Mime type is invalid");
+//     if (isValid) {
+//       error = null;
+//     }
+//     cb(null, "backend/images");
+//   },
+//   filename: (req, file, cb) => {
+//     const name = file.originalname.toLowerCase().split(" ").join("-");
+//     const extension = MIME_TYPE[file.mimetype];
+//     const imgName = name + "-" + Date.now() + "-crococoder" + "." + extension;
+//     cb(null, imgName);
+//   },
+// });
 
 // import body parser module
 const bodyParser = require("body-parser");
@@ -157,14 +219,18 @@ app.delete('/plats/:id', (req, res) => {
   // )
 })
 ///////ADD PLAT////////
-app.post('/plats', (req, res) => {
+app.post('/plats', multer({ storage: storage }).single('image') ,(req, res) => {
+  url = req.protocol + '://' + req.get('host');
+
   console.log('here into add plat ', req.body);
   // save to  DB
   const plat = new Plat({
 
     name: req.body.name,
     price: req.body.price,
-    description: req.body.description
+    description: req.body.description,
+    img: url + '/images/' + req.file.filename
+    
   });
   plat.save().then((result) => {
     console.log('result after save', result);
@@ -190,7 +256,8 @@ app.put('/plats/:id', (req, res) => {
     _id: req.params.id,
     name: req.body.name,
     price: req.body.price,
-    description: req.body.description
+    description: req.body.description,
+    image: url + "/images/" + req.file.filename
 
 
 
@@ -325,13 +392,16 @@ app.delete('/chefs/:id', (req, res) => {
 
 })
 ////////////////////ADD CHEF///////////////////////////////////
-app.post('/chefs', (req, res) => {
+app.post('/chefs',multer({ storage: storage }).single('img'), (req, res) => {
   console.log('here into add ched ', req.body);
+  url = req.protocol + '://' + req.get('host');
+
   // save to DB :
   const chef = new Chef({
     name: req.body.name,
     speciality: req.body.speciality,
     note: req.body.note,
+    img: url + '/images/' + req.file.filename
   })
   chef.save().then((result) => {
 
@@ -477,13 +547,15 @@ app.delete('/users/:id', (req, res) => {
 
 )
 ///////////////////////////////add User////////////
-app.post('/users/signup', (req, res) => {
+app.post('/users/signup',multer({ storage: storage }).single('img'), (req, res) => {
   bcrypt.hash(req.body.pwd, 10).then(
     (cryptedPwd) => {
 
 
 
       console.log('here into add user', req.body);
+      url = req.protocol + '://' + req.get('host');
+
       const user = new User(
         {
           firstName: req.body.firstName,
@@ -492,7 +564,9 @@ app.post('/users/signup', (req, res) => {
           pwd: cryptedPwd,
           // confirmPwd: req.body.confirmPwd,
           phone: req.body.phone,
-          role: req.body.role
+          role: req.body.role,
+          img: url + "/images/" + req.file.filename
+
         }
       )
       user.save().then((result) => {
@@ -613,7 +687,14 @@ app.post('/users/login', (req, res) => {
             res.status(200).json(
               {
                 message: '2',
-                connectedUser: userToSend
+                connectedUser: userToSend,
+                token: jwt.sign(
+                  {
+                    user: userToSend,
+                  },
+                  'RANDOM_TOKEN_SECRET',
+                  { expiresIn: '24h' }
+                )
 
               }
             )
@@ -766,10 +847,10 @@ app.get('/articles/:id', (req, res) => {
   Article.findOne({ _id: req.params.id }).then((result) => {
     console.log('here into result', result);
     if (result) {
-      console.log('result',result);
+      console.log('result', result);
       res.status(200).json(
         {
-          
+
           article: result
 
         });
@@ -780,14 +861,19 @@ app.get('/articles/:id', (req, res) => {
 
 
 //add Article
-app.post('/articles', (req, res) => {
+app.post('/articles', multer({ storage: storage }).single('img') ,(req, res) => {
+  url = req.protocol + '://' + req.get('host');
+
   console.log('here into add article ', req.body);
+
   const article = new Article(
     {
       title: req.body.title,
       content: req.body.content,
       date: req.body.date,
-      category: req.body.category
+      category: req.body.category,     
+      img: url + "/images/" + req.file.filename
+
 
     }
   )
@@ -821,27 +907,27 @@ app.delete('/articles/:id', (req, res) => {
 
 })
 /////////edit article///////////
-app.put('/articles/:id', (req,res)=>{
- console.log('here into edit article');
- const newArticle = new Article({
-  title: req.body.title,
-  content: req.body.content,
-  date: req.body.date,
-  category: req.body.category,
-  _id:req.params.id
+app.put('/articles/:id', (req, res) => {
+  console.log('here into edit article');
+  const newArticle = new Article({
+    title: req.body.title,
+    content: req.body.content,
+    date: req.body.date,
+    category: req.body.category,
+    _id: req.params.id
 
- })
+  })
 
-Article.updateOne({_id:req.params.id},newArticle).then((result)=>{
-  console.log('result after update',result);
-  if (result) {
-    res.status(200).json({
+  Article.updateOne({ _id: req.params.id }, newArticle).then((result) => {
+    console.log('result after update', result);
+    if (result) {
+      res.status(200).json({
 
-      message:'update with success :)'
-    })
-    
-  }
-})
+        message: 'update with success :)'
+      })
+
+    }
+  })
 });
 ////////////////get All Orders///////////
 // app.get('/orders', (req,res)=>{
@@ -883,8 +969,7 @@ app.get('/orders/:id', (req, res) => {
       });
 
       console.log('ids', ids);
-      Plat.find({ _id:{ $in : ids} }).then((result)=>
-      {
+      Plat.find({ _id: { $in: ids } }).then((result) => {
         res.status(200).json(
           {
             myOrders: result
@@ -892,7 +977,7 @@ app.get('/orders/:id', (req, res) => {
         );
       })
 
-    
+
 
     }
   })
@@ -939,33 +1024,61 @@ app.post('/orders', (req, res) => {
 
 
 ////addlocation 
-app.post('/weathers' ,(req,res)=>
-{
+app.post('/weathers', (req, res) => {
   console.log('here into add location', req.body.town);
   const country = req.body.town;
- const apiKey = "62ee756a34835483299877a61961cafb";
- const apiUrl =
- "https://api.openweathermap.org/data/2.5/weather?q=" +
- country +
- "&appid=" +
- apiKey + "&units=metric";
- axios
- .get(apiUrl)
- .then((response) => {
- console.log('Here response', response);
- const weather = response.data.main;
- console.log('Here weather main', weather);
- const result = {
- temp: weather.temp,
- pressure: weather.pressure,
- humidity:weather.humidity
- }
- res.status(200).json({
- result:result
- })
- });
+  const apiKey = "62ee756a34835483299877a61961cafb";
+  const apiUrl =
+    "https://api.openweathermap.org/data/2.5/weather?q=" +
+    country +
+    "&appid=" +
+    apiKey + "&units=metric";
+  axios
+    .get(apiUrl)
+    .then((response) => {
+      console.log('Here response', response);
+      const weather = response.data.main;
+      console.log('Here weather main', weather);
+      const result = {
+        temp: weather.temp,
+        pressure: weather.pressure,
+        humidity: weather.humidity
+      }
+      res.status(200).json({
+        result: result
+      })
+    });
 
 })
+///////////restaurant/////////
+
+
+
+app.post('/food',(req,res)=>{
+
+  console.log('here into food',req.body);
+  var options = {
+    method: 'GET',
+    url: 'https://edamam-food-and-grocery-database.p.rapidapi.com/parser',
+    params: {ingr:req.body},
+    headers: {
+      'x-rapidapi-host': 'edamam-food-and-grocery-database.p.rapidapi.com',
+      'x-rapidapi-key': '8f458356b3msh9a3ffd939f60381p1b1d00jsn90cee4a5039d'
+    }
+  };
+  
+  axios.request(options).then( (response)=> {
+    console.log(response.data);
+    res.status(200).json(
+      {
+        result:response.data
+      }
+    )
+  }).catch(function (error) {
+    console.error(error);
+  });
+})
+
 module.exports = app;
 //install mongoose , bady-parser , multer
 

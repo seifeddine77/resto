@@ -8,7 +8,8 @@ const userSchema = mongoose.Schema({
     pwd:String,
     // confirmPwd:String,
     phone:String,
-    role:String
+    role:String,
+    img:String
 })
 const user = mongoose.model('user',userSchema);
 module.exports= user;

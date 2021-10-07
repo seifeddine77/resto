@@ -13,6 +13,7 @@ export class WeatherComponent implements OnInit {
   codehtml: any;
   title: string;
   result:any;
+  sport:any;
   constructor(private fb: FormBuilder,
     private weatherService: WeatherService) { }
 
@@ -22,6 +23,7 @@ export class WeatherComponent implements OnInit {
         town: ['']
       }
     )
+    
 
   }
   searchByTown() {

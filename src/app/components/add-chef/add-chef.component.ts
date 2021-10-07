@@ -10,6 +10,8 @@ import { ChefService } from 'src/app/services/chef.service';
 })
 export class AddChefComponent implements OnInit {
   id: any;
+  imagePreview:string;
+
   chefForm: FormGroup;
   chef: any = { };
   title: string;
@@ -50,6 +52,7 @@ export class AddChefComponent implements OnInit {
         name: [''],
         speciality: [''],
         note: [''],
+        img:['']
 
 
 
@@ -90,7 +93,7 @@ export class AddChefComponent implements OnInit {
     else {
 
       console.log("here objct chef", this.chef);
-      this.chefService.addChef(this.chef).subscribe(
+      this.chefService.addChef(this.chef , this.chefForm.value.img).subscribe(
         (data) => {
           console.log('result', data.message);
 
@@ -125,5 +128,16 @@ export class AddChefComponent implements OnInit {
     return searchedChef;
 
   }
-
+ 
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files[0];
+    this.chefForm.patchValue({ img: file });
+    this.chefForm.updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+    this.imagePreview = reader.result as string
+    };
+    reader.readAsDataURL(file);
+    }
+   
 }

@@ -4,6 +4,7 @@ import { AddArticleComponent } from './components/add-article/add-article.compon
 import { AddChefComponent } from './components/add-chef/add-chef.component';
 import { AddPlatComponent } from './components/add-plat/add-plat.component';
 import { AdminComponent } from './components/admin/admin.component';
+import { ChefSpaceComponent } from './components/chef-space/chef-space.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { DisplayArticleComponent } from './components/display-article/display-article.component';
 import { DisplayChefComponent } from './components/display-chef/display-chef.component';
@@ -12,6 +13,7 @@ import { DisplayUserComponent } from './components/display-user/display-user.com
 import { EditChefComponent } from './components/edit-chef/edit-chef.component';
 import { EditPlatComponent } from './components/edit-plat/edit-plat.component';
 import { EditUserComponent } from './components/edit-user/edit-user.component';
+import { FoodsearchComponent } from './components/foodsearch/foodsearch.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { MenuToOrderComponent } from './components/menu-to-order/menu-to-order.component';
@@ -47,7 +49,9 @@ const routes: Routes = [
   {path:'search',component:SearchComponent},
   {path:'menuToOrder',component:MenuToOrderComponent},
   {path:'myOrders',component:MyOrdersComponent},
-  {path:'weather',component:WeatherComponent}
+  {path:'weather',component:WeatherComponent},
+  {path:'food',component:FoodsearchComponent},
+  {path:'chefSpace',component:ChefSpaceComponent}
 
 ];
 

@@ -111,7 +111,12 @@
 
 
                             </div>
-
+                            <button type="button" (click)='filePicker.click()' class="btn btn-success">Sélectionner image</button>
+                            <div class="form-group">
+                            <input style="visibility: hidden;" type="file" class="form-control"
+                           #filePicker (change)='onImageSelected($event)' />
+                            </div>
+                            <img [src]="imagePreview" *ngIf='imagePreview'>
 
                             <div class="regerv_btn">
                                 <button type="submit" class="btn_4" (click)='signUp()'>SignUp</button>

@@ -59,6 +59,12 @@ export class LoginComponent implements OnInit {
             alert('hello' + data.connectedUser.fName + ' ' + data.connectedUser.lName);
 
           }
+          else if(data.connectedUser.role =='chef'){
+
+            console.log('welcome', data.connectedUser.fName, ' ', data.connectedUser.lName);
+            this.router.navigate(['chefSpace']);
+            alert('hello' + data.connectedUser.fName + ' ' + data.connectedUser.lName);
+          }
           else {
             console.log('welcome', data.connectedUser.fName, ' ', data.connectedUser.lName);
             this.router.navigate(['admin'])

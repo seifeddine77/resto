@@ -5,7 +5,8 @@ const plastSchema = mongoose.Schema({
 
     name:String,
     price:Number,
-  description:String
+  description:String,
+  img:String
 });
 //// donner un nom a le modele 
 const plat = mongoose.model('plat',plastSchema);

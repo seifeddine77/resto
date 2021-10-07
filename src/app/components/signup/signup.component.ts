@@ -12,6 +12,7 @@ import { MustMatch } from 'src/app/validators/confirmPwd';
 export class SignupComponent implements OnInit {
   signupForm: FormGroup;
   url: string;
+  imagePreview:any;
   constructor(private formBuilder: FormBuilder,
     private userService: UserService,
     private router: Router) { }
@@ -28,7 +29,8 @@ export class SignupComponent implements OnInit {
         pwd: ['', [Validators.required, Validators.maxLength(12), Validators.minLength(8)]],
         confirmPwd: [''],
         phone: ['', [Validators.required, Validators.maxLength(8), Validators.minLength(8)]],
-        // role:['client']
+        role:['client'],
+        img:[]
 
 
 
@@ -62,7 +64,7 @@ export class SignupComponent implements OnInit {
     }
 
 
-    this.userService.signup(this.signupForm.value).subscribe(
+    this.userService.signup(this.signupForm.value , this.signupForm.value.img).subscribe(
 
       (data) => {
         console.log('result', data.message);
@@ -72,4 +74,14 @@ export class SignupComponent implements OnInit {
     this.router.navigate(['']);
 
   }
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files[0];
+    this.signupForm.patchValue({ img: file });
+    this.signupForm.updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {this.signupForm
+    this.imagePreview = reader.result as string
+    };
+    reader.readAsDataURL(file);
+    }
 }
